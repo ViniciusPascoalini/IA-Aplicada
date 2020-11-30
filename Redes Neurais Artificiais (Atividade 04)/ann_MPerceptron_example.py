@@ -7,6 +7,8 @@ https://medium.com/@vitorborbarodrigues/m%C3%A9tricas-de-avalia%C3%A7%C3%A3o-acu
 @author: 
 """
 
+import numpy as np
+
 from sklearn.datasets import load_iris
 
 iris = load_iris()
@@ -50,10 +52,76 @@ print(accuracy_score(predictions_test, test_labels))
 
 from sklearn.metrics import confusion_matrix
 
-confusion_matrix(predictions_train, train_labels)
+"""
+Calculando as métricas desejadas, a partir da Matriz de confusão
+"""
 
-confusion_matrix(predictions_test, test_labels)
+confMatrixWithTrainData =  confusion_matrix(predictions_train, train_labels)
+confusionMatrix = confusion_matrix(predictions_test, test_labels)
 
-from sklearn.metrics import classification_report
+"""
+Com os dados de Treino
+"""
+print('\n\n ------- Com os dados de Treino: -------\n')
 
-print(classification_report(predictions_test, test_labels))
+diagonalPrinc = confMatrixWithTrainData.diagonal()
+print(confMatrixWithTrainData)
+
+
+acc = sum(diagonalPrinc)/sum(sum(confMatrixWithTrainData))
+print('Acurácia: ', acc)
+
+"""
+np.sum axis=0 soma os elementos das linhas da matriz
+"""
+precision = diagonalPrinc/np.sum(confMatrixWithTrainData, axis=0)
+print('\nPrecisão: ', precision)
+precisionMean = np.mean(precision) 
+print('\nMédia das precisões: ', precisionMean )
+
+"""
+np.sum axis=1 soma os elementos das colunas da matriz
+"""
+recall = diagonalPrinc/np.sum(confMatrixWithTrainData, axis=1)
+print('\nRecall: ', recall)
+recallMean = np.mean(recall)
+print("\nMédia dos recall's: ", recallMean)
+
+F1Score = 2*precision*recall/(precision + recall)
+print('\nF1Score: ', F1Score)
+F1ScoreMean = np.mean(F1Score)
+print('\nMédia de F1Score: ', F1ScoreMean)
+
+"""
+Com os dados de Teste
+"""
+
+print('\n\n ------- Com os dados de Teste: -------\n')
+
+diagonalPrinc = confusionMatrix.diagonal()
+print(confusionMatrix)
+
+
+acc = sum(diagonalPrinc)/sum(sum(confusionMatrix))
+print('Acurácia: ', acc)
+
+"""
+np.sum axis=0 soma os elementos das linhas da matriz
+"""
+precision = diagonalPrinc/np.sum(confusionMatrix, axis=0)
+print('\nPrecisão: ', precision)
+precisionMean = np.mean(precision) 
+print('\nMédia das precisões: ', precisionMean )
+
+"""
+np.sum axis=1 soma os elementos das colunas da matriz
+"""
+recall = diagonalPrinc/np.sum(confusionMatrix, axis=1)
+print('\nRecall: ', recall)
+recallMean = np.mean(recall)
+print("\nMédia dos recall's: ", recallMean)
+
+F1Score = 2*precision*recall/(precision + recall)
+print('\nF1Score: ', F1Score)
+F1ScoreMean = np.mean(F1Score)
+print('\nMédia de F1Score: ', F1ScoreMean)
