@@ -3,12 +3,11 @@ Created on Sat Oct 24 22:43:02 2020
 @author: Arthur Pires,
 """
 
-
-
-
 import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
+
+from sklearn.metrics import confusion_matrix
 
 from sklearn.datasets import load_iris
 
@@ -34,6 +33,13 @@ data3c=data0[125:]
 # data2c=data0[50:100]
 # data3c=data0[100:]
 
+#Target para a segunda parte do dataset
+target = data.target
+target1c=target[25:50]
+target2c=target[75:100]
+target3c=target[125:]
+
+y_test = np.concatenate((target1c, np.concatenate((target2c, target3c), axis=None)), axis=None) 
 
 # Maximos e minimos das entradas (comprimento e largura das pétalas)
 
@@ -129,10 +135,7 @@ plt.xticks([12.5,12.5+laux,12.5+(2*laux)],['Espécie 1','Espécie 2','Espécie 3
 
 plt.suptitle('Resultados Fuzzy Iris', fontsize=14, fontweight='bold')
 
-acertos1=0
-acertos2=0
-acertos3=0
-
+y_pred = np.array([])
 
 # Verificação da eficiencia a partir dos limites 
 
@@ -141,18 +144,48 @@ l2=2 # 3*2/3
 
 plt.axhline(y=l1,color='r',label='Limite Inferior')
 plt.axhline(y=l2,color='m',label='Limite Superior')
-plt.legend()    
+plt.legend() 
 
 
-for i in range(laux):
+for i in range(3*laux):
  
     if resultados[i]<l1 :
-        acertos1+=1
-    if ((resultados[i+laux]>l1) & (resultados[i+laux]<l2)):
-        acertos2+=1
-    if resultados[i+(laux*2)]>l2 :
-        acertos3+=1
+        y_pred = np.append(y_pred, 0)
+    elif ((resultados[i]>l1) & (resultados[i]<l2)):
+        y_pred = np.append(y_pred, 1)
+    else :
+        y_pred = np.append(y_pred, 2)
     
-print("\n % de acertos em cada grupo: ",[100*acertos1/laux, 100*acertos2/laux,100*acertos3/laux])
-print("\n % de acerto Total: ",round(np.mean(100*(acertos1+acertos2+acertos3)/(laux*3)),2))
+"""
+Calculando as métricas desejadas, a partir da Matriz de confusão
+"""
 
+confusionMatrix = confusion_matrix(y_test, y_pred)
+
+diagonalPrinc = confusionMatrix.diagonal()
+print(confusionMatrix)
+
+
+acc = sum(diagonalPrinc)/sum(sum(confusionMatrix))
+print('Acurácia: ', acc)
+
+"""
+np.sum axis=0 soma os elementos das linhas da matriz
+"""
+precision = diagonalPrinc/np.sum(confusionMatrix, axis=0)
+print('\nPrecisão: ', precision)
+precisionMean = np.mean(precision) 
+print('\nMédia das precisões: ', precisionMean )
+
+"""
+np.sum axis=1 soma os elementos das colunas da matriz
+"""
+recall = diagonalPrinc/np.sum(confusionMatrix, axis=1)
+print('\nRecall: ', recall)
+recallMean = np.mean(recall)
+print("\nMédia dos recall's: ", recallMean)
+
+F1Score = 2*precision*recall/(precision + recall)
+print('\nF1Score: ', F1Score)
+F1ScoreMean = np.mean(F1Score)
+print('\nMédia de F1Score: ', F1ScoreMean)
