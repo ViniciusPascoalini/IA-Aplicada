@@ -10,7 +10,6 @@ import skfuzzy as fuzz
 from sklearn.datasets import load_iris
 
 from sklearn.model_selection import train_test_split
-from sklearn.metrics.cluster import contingency_matrix
 from sklearn.metrics import confusion_matrix
 
 import numpy as np

@@ -16,7 +16,7 @@ iris = load_iris()
 
 from sklearn.model_selection import train_test_split
 datasets = train_test_split(iris.data, iris.target,
-                            test_size=0.2)
+                            test_size=0.5)
 
 train_data, test_data, train_labels, test_labels = datasets
 # scaling the data
@@ -35,7 +35,8 @@ test_data = scaler.transform(test_data)
 # Creating the Model
 from sklearn.neural_network import MLPClassifier
 # creating an classifier from the model:
-mlp = MLPClassifier(hidden_layer_sizes=(10, 10), max_iter=1000)
+mlp = MLPClassifier(hidden_layer_sizes=(10, 10), max_iter=1000, solver='lbfgs',
+                    batch_size=24)
 
 # Training the Model
 # let's fit the training data to our model
